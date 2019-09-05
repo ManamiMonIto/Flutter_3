@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
-import './answer.dart';
-import './question.dart';
 import './quiz.dart';
+import './result.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,29 +14,54 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  static const questions = [
+  static const _questions = [
     {
       'questionText': 'What is your favorite color?',
-      'answers': ['Black', 'Red', 'Green', 'White']
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Red', 'score': 5},
+        {'text': 'Green', 'score': 8},
+        {'text': 'White', 'score': 7},
+      ]
     },
     {
       'questionText': 'What is your favorite animal?',
-      'answers': ['Elephant', 'Gorilla', 'Penguine', 'Turtle']
+      'answers': [
+        {'text': 'Elephant', 'score': 10},
+        {'text': 'Gorilla', 'score': 9},
+        {'text': 'Penguine', 'score': 8},
+        {'text': 'Turtle', 'score': 7},
+      ]
     },
     {
       'questionText': 'What is your favorite season?',
-      'answers': ['Spring', 'Summer', 'Autum', 'Winter']
+      'answers': [
+        {'text': 'Spring', 'score': 8},
+        {'text': 'Summer', 'score': 6},
+        {'text': 'Autum', 'score': 10},
+        {'text': 'Winter', 'score': 9},
+      ]
     },
   ];
 
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion() {
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
+  }
+
+  void _answerQuestion(int score) {
+    _totalScore += score;
+
     setState(() {
       _questionIndex = _questionIndex + 1;
     });
     print(_questionIndex);
-    if (_questionIndex < questions.length) {
+    if (_questionIndex < _questions.length) {
       print('We have more questions');
     } else {
       print('no more question!');
@@ -52,9 +75,13 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My First App'),
         ),
-        body: _questionIndex < questions.length
-            ? Quiz()
-            : Center(child: Text('You did it!')),
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                answerQuestion: _answerQuestion,
+                questionIndex: _questionIndex,
+                questions: _questions,
+              )
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
